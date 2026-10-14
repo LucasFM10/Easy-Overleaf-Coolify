@@ -1,0 +1,67 @@
+services:
+  # O nome do serviço NÃO pode ser "sharelatex": o Coolify cria a variável
+  # SERVICE_NAME_SHARELATEX e o Overleaf se recusa a iniciar por causa dela.
+  overleaf:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: overleaf-tcc:6.3.0
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - overleaf-data:/var/lib/overleaf
+    environment:
+      # Variável "mágica": o Coolify gera um domínio automaticamente
+      # e encaminha o tráfego para a porta 80 do container.
+      - SERVICE_URL_OVERLEAF_80
+      - OVERLEAF_SITE_URL=${SERVICE_URL_OVERLEAF}
+      - OVERLEAF_APP_NAME=Overleaf
+      - OVERLEAF_BEHIND_PROXY=true
+      - OVERLEAF_SECURE_COOKIE=true
+      - OVERLEAF_MONGO_URL=mongodb://mongo/sharelatex
+      - OVERLEAF_REDIS_HOST=redis
+      - REDIS_HOST=redis
+      # Segredo gerado pelo Coolify no primeiro deploy e mantido nos seguintes.
+      - OVERLEAF_INVITE_TOKEN_SECRET=${SERVICE_PASSWORD_64_INVITE}
+      - ENABLED_LINKED_FILE_TYPES=project_file,project_output_file
+      - ENABLE_CONVERSIONS=true
+      - EMAIL_CONFIRMATION_DISABLED=true
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  mongo:
+    image: mongo:8.0
+    restart: unless-stopped
+    command: --replSet overleaf
+    environment:
+      # Contorna a incompatibilidade do MongoDB 8 com kernels Linux 6.19+.
+      - GLIBC_TUNABLES=glibc.pthread.rseq=1
+    volumes:
+      - mongo-data:/data/db
+    extra_hosts:
+      - "mongo:127.0.0.1"
+    healthcheck:
+      # Também inicializa o replica set na primeira execução.
+      test: mongosh --quiet --eval "try { rs.status().ok } catch (e) { rs.initiate({_id:'overleaf',members:[{_id:0,host:'mongo:27017'}]}).ok }"
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  redis:
+    image: redis:6.2
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+volumes:
+  overleaf-data:
+  mongo-data:
+  redis-data:
