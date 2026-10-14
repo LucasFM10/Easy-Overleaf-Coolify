@@ -21,7 +21,6 @@ services:
       - OVERLEAF_SITE_URL=${SERVICE_URL_OVERLEAF}
       - OVERLEAF_APP_NAME=Overleaf
       - OVERLEAF_BEHIND_PROXY=true
-      - OVERLEAF_SECURE_COOKIE=true
       - OVERLEAF_MONGO_URL=mongodb://mongo/sharelatex
       - OVERLEAF_REDIS_HOST=redis
       - REDIS_HOST=redis
