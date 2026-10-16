@@ -1,6 +1,9 @@
-# Overleaf Community Edition com os pacotes LaTeX mais usados em TCCs já instalados.
+# Overleaf Extended Community Edition (CE+, projeto yu-i-i/overleaf-cep) com os
+# pacotes LaTeX mais usados em TCCs já instalados.
+# O CE+ adiciona comentários, track changes, papel de revisor, Git, GitHub sync etc.
 # Os pacotes ficam "embutidos" na imagem: não é preciso rodar tlmgr depois do deploy.
-FROM sharelatex/sharelatex:6.3.0
+# A tag 6.3.0-ext-v5.1 corresponde ao Overleaf 6.3.0 oficial (mesma versão de antes).
+FROM overleafcep/sharelatex:6.3.0-ext-v5.1
 
 # Coleções do TeX Live a instalar (cobrem a grande maioria dos trabalhos acadêmicos
 # brasileiros, incluindo TeX Gyre, português e abnTeX2).
