@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: overleaf-tcc:6.3.0
+    image: overleaf-tcc:6.3.0-ext-v5.1
     restart: unless-stopped
     depends_on:
       mongo:
@@ -29,6 +29,13 @@ services:
       - ENABLED_LINKED_FILE_TYPES=project_file,project_output_file
       - ENABLE_CONVERSIONS=true
       - EMAIL_CONFIRMATION_DISABLED=true
+      # --- Opcional: sincronização com GitHub (recurso do CE+) ---
+      # 1) Crie um OAuth App no GitHub com a callback:
+      #    <seu domínio>/user/github-sync/oauth2/callback
+      # 2) Descomente as 3 linhas abaixo e preencha os valores no Coolify.
+      # - GITHUB_SYNC_ENABLED=true
+      # - GITHUB_SYNC_CLIENT_ID=${GITHUB_SYNC_CLIENT_ID}
+      # - GITHUB_SYNC_CLIENT_SECRET=${GITHUB_SYNC_CLIENT_SECRET}
     healthcheck:
       test: ["CMD", "curl", "-fs", "http://localhost/status"]
       interval: 30s
