@@ -20,6 +20,5 @@ RUN set -eux; \
     tlmgr option docfiles 0; \
     tlmgr option srcfiles 0; \
     tlmgr option autobackup 0; \
-    tlmgr update --self; \
     tlmgr install $TL_COLLECTIONS; \
     rm -rf /tmp/*
