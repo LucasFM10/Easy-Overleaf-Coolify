@@ -20,5 +20,11 @@ RUN set -eux; \
     tlmgr option docfiles 0; \
     tlmgr option srcfiles 0; \
     tlmgr option autobackup 0; \
-    tlmgr install $TL_COLLECTIONS; \
+    tlmgr update --self; \
+    tlmgr --no-execute-actions install $TL_COLLECTIONS; \
+    mktexlsr; \
+    updmap-sys; \
+    tlmgr generate language; \
+    tlmgr generate fmtutil; \
+    fmtutil-sys --all --no-error-if-no-engine=luametatex,luajithbtex,luajittex,mfluajit,xetex; \
     rm -rf /tmp/*
