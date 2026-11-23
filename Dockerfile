@@ -25,6 +25,5 @@ RUN set -eux; \
     mktexlsr; \
     updmap-sys; \
     tlmgr generate language; \
-    tlmgr generate fmtutil; \
     fmtutil-sys --all --no-error-if-no-engine=luametatex,luajithbtex,luajittex,mfluajit,xetex; \
     rm -rf /tmp/*
